@@ -8,17 +8,308 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/himanshuholmes/bikerental/gen/go/proto/bikes"
+	"github.com/himanshuholmes/bikerental/gen/go/proto/rentees"
 	"github.com/himanshuholmes/bikerental/graph/model"
 )
 
-// CreateTodo is the resolver for the createTodo field.
-func (r *mutationResolver) CreateTodo(ctx context.Context, input model.NewTodo) (*model.Todo, error) {
-	panic(fmt.Errorf("not implemented: CreateTodo - createTodo"))
+// AddBike is the resolver for the addBike field.
+func (r *mutationResolver) AddBike(ctx context.Context, bike model.NewBike) (*model.Bike, error) {
+	resp, err := r.BikeClient.AddBike(ctx, &bikes.AddBikeRequest{Bike: &bikes.Bike{
+		Type:      *bike.Type,
+		Make:      *bike.Make,
+		OwnerName: bike.OwnerName,
+		Serial:    *bike.Serial,
+	}})
+	if err != nil {
+		return nil, err
+	}
+	return &model.Bike{
+		ID:        resp.Bike.Id,
+		Type:      resp.Bike.Type,
+		Make:      resp.Bike.Make,
+		OwnerName: resp.Bike.OwnerName,
+		Serial:    resp.Bike.Serial,
+	}, nil
 }
 
-// Todos is the resolver for the todos field.
-func (r *queryResolver) Todos(ctx context.Context) ([]*model.Todo, error) {
-	panic(fmt.Errorf("not implemented: Todos - todos"))
+// DeleteBike is the resolver for the deleteBike field.
+func (r *mutationResolver) DeleteBike(ctx context.Context, id string) (bool, error) {
+	resp, err := r.BikeClient.DeleteBike(ctx, &bikes.DeleteBikeRequest{Id: id})
+	fmt.Printf("resp: %+v\n", resp)
+	if err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
+// AddRentee is the resolver for the addRentee field.
+func (r *mutationResolver) AddRentee(ctx context.Context, rentee model.NewRenteeInput) (*model.Rentee, error) {
+	resp, err := r.RenteeClient.AddRentee(ctx, &rentees.AddRenteeRequest{
+		Rentee: &rentees.Rentee{
+			FirstName:          rentee.FirstName,
+			LastName:           rentee.LastName,
+			Email:              rentee.Email,
+			Phone:              rentee.Phone,
+			National_Id_Number: rentee.NationalIDNumber,
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
+	return &model.Rentee{
+		ID:               resp.Rentee.Id,
+		FirstName:        resp.Rentee.FirstName,
+		LastName:         resp.Rentee.LastName,
+		Email:            resp.Rentee.Email,
+		Phone:            resp.Rentee.Phone,
+		NationalIDNumber: resp.Rentee.National_Id_Number,
+	}, nil
+}
+
+// UpdateRentee is the resolver for the updateRentee field.
+func (r *mutationResolver) UpdateRentee(ctx context.Context, rentee model.RenteeInput) (*model.Rentee, error) {
+	resp,err := r.RenteeClient.UpdateRentee(ctx, &rentees.UpdateRenteeRequest{Rentee: &rentees.Rentee{
+		Id:                rentee.ID,
+		FirstName:         rentee.FirstName,
+		LastName:          rentee.LastName,
+		National_Id_Number: rentee.NationalIDNumber,
+		Phone:             rentee.Phone,
+		Email:             rentee.Email,	
+		HeldBikes:         rentee.HeldBikes,
+	}})
+	if err != nil {
+		return nil, err
+	}
+	return &model.Rentee{
+		ID:                resp.Rentee.Id,
+		FirstName:         resp.Rentee.FirstName,
+		LastName:          resp.Rentee.LastName,
+		NationalIDNumber:  resp.Rentee.National_Id_Number,
+		Phone:             resp.Rentee.Phone,
+		Email:             resp.Rentee.Email,
+		HeldBikes:         resp.Rentee.HeldBikes,
+	}, nil	
+}
+
+// Bikes is the resolver for the bikes field.
+func (r *queryResolver) ListBikes(ctx context.Context) ([]*model.Bike, error) {
+	resp, err := r.BikeClient.ListBikes(ctx, &bikes.ListBikesRequest{})
+	if err != nil {
+		return nil, err
+	}
+	var bikes []*model.Bike
+	for _, bike := range resp.Bikes {
+		bikes = append(bikes, &model.Bike{
+			ID:        bike.Id,
+			Type:      bike.Type,
+			Make:      bike.Make,
+			Serial:    bike.Serial,
+			OwnerName: bike.OwnerName,
+		})
+	}
+	return bikes, nil
+}
+
+// GetBike is the resolver for the getBike field.
+func (r *queryResolver) GetBike(ctx context.Context, id string) (*model.Bike, error) {
+	panic(fmt.Errorf("not implemented: GetBike - getBike"))
+}
+
+// GetBikes is the resolver for the getBikes field.
+func (r *queryResolver) GetBikes(ctx context.Context, ids []string) ([]*model.Bike, error) {
+	resp,err := r.BikeClient.GetBikes(ctx, &bikes.GetBikesRequest{Ids: ids})
+	if err != nil {
+		return nil, err
+	}
+	var bikes []*model.Bike
+	for _, bike := range resp.Bikes {
+		bikes = append(bikes, &model.Bike{
+			ID:        bike.Id,
+			Type:      bike.Type,
+			Make:      bike.Make,
+			Serial:    bike.Serial,
+			OwnerName: bike.OwnerName,
+		})
+	}
+	return bikes, nil
+}
+
+// GetBikesByType is the resolver for the getBikesByTYPE field.
+func (r *queryResolver) GetBikesByType(ctx context.Context, typeArg string) ([]*model.Bike, error) {
+	resp,err := r.BikeClient.GetBikesByTYPE(ctx, &bikes.GetBikesByTYPERequest{Type: typeArg})
+	if err != nil {
+		return nil, err
+	}
+	var bikes []*model.Bike
+	for _, bike := range resp.Bikes {
+		bikes = append(bikes, &model.Bike{
+			ID:        bike.Id,
+			Type:      bike.Type,
+			Make:      bike.Make,
+			Serial:    bike.Serial,
+			OwnerName: bike.OwnerName,
+		})
+	}
+	return bikes, nil
+}
+
+// GetBikesByOwner is the resolver for the getBikesByOWNER field.
+func (r *queryResolver) GetBikesByOwner(ctx context.Context, ownerName string) ([]*model.Bike, error) {
+	resp,err := r.BikeClient.GetBikesByOWNER(ctx, &bikes.GetBikesByOWNERRequest{OwnerName: ownerName})
+	if err != nil {
+		return nil, err
+	}
+	var bikes []*model.Bike
+	for _, bike := range resp.Bikes {
+		bikes = append(bikes, &model.Bike{
+			ID:        bike.Id,
+			Type:      bike.Type,
+			Make:      bike.Make,
+			Serial:    bike.Serial,
+			OwnerName: bike.OwnerName,
+		})
+	}
+	return bikes, nil
+}
+
+// GetBikesByMake is the resolver for the getBikesByMAKE field.
+func (r *queryResolver) GetBikesByMake(ctx context.Context, make string) ([]*model.Bike, error) {
+	resp,err := r.BikeClient.GetBikesByMAKE(ctx, &bikes.GetBikesByMAKERequest{Make: make})
+	if err != nil {
+		return nil, err
+	}
+	var bikes []*model.Bike
+	for _, bike := range resp.Bikes {
+		bikes = append(bikes, &model.Bike{
+			ID:        bike.Id,
+			Type:      bike.Type,
+			Make:      bike.Make,
+			Serial:    bike.Serial,
+			OwnerName: bike.OwnerName,
+		})
+	}
+	return bikes, nil
+}
+
+// ListRentees is the resolver for the listRentees field.
+func (r *queryResolver) ListRentees(ctx context.Context) ([]*model.Rentee, error) {
+	resp,err := r.RenteeClient.ListRentees(ctx, &rentees.ListRenteesRequest{})
+	if err != nil {
+		return nil, err
+	}
+	var rentees []*model.Rentee
+	for _, rentee := range resp.Rentees {
+		rentees = append(rentees, &model.Rentee{
+			FirstName: rentee.FirstName,
+			LastName: rentee.LastName,
+			NationalIDNumber: rentee.National_Id_Number,
+			Phone: rentee.Phone,
+			Email: rentee.Email,
+			ID: rentee.Id,
+			HeldBikes: rentee.HeldBikes,
+		})
+	}
+	return rentees, nil
+}
+
+// GetRentee is the resolver for the getRentee field.
+func (r *queryResolver) GetRentee(ctx context.Context, id string) (*model.Rentee, error) {
+     resp,err := r.RenteeClient.GetRentee(ctx, &rentees.GetRenteeRequest{Id: id})
+	if err != nil {
+		return nil, err
+	}
+	return &model.Rentee{
+		FirstName: resp.Rentee.FirstName,
+		LastName: resp.Rentee.LastName,
+		NationalIDNumber: resp.Rentee.National_Id_Number,
+		Phone: resp.Rentee.Phone,
+		Email: resp.Rentee.Email,
+		ID: resp.Rentee.Id,
+		HeldBikes: resp.Rentee.HeldBikes,
+	}, nil
+
+}
+
+// GetRenteeByBikeID is the resolver for the getRenteeByBikeId field.
+func (r *queryResolver) GetRenteeByBikeID(ctx context.Context, id string) (*model.Rentee, error) {
+	resp,err := r.RenteeClient.GetRenteeByBikeId(ctx, &rentees.GetRenteeByBikeIdRequest{Id: id})
+	if err != nil {
+		return nil, err
+	}
+	return &model.Rentee{
+		FirstName: resp.Rentee.FirstName,
+		LastName: resp.Rentee.LastName,
+		NationalIDNumber: resp.Rentee.National_Id_Number,
+		Phone: resp.Rentee.Phone,
+		Email: resp.Rentee.Email,
+		ID: resp.Rentee.Id,
+		HeldBikes: resp.Rentee.HeldBikes,
+	}, nil
+}
+
+// GetRenteesByBikeType is the resolver for the getRenteesByBikeTYPE field.
+func (r *queryResolver) GetRenteesByBikeType(ctx context.Context, typeArg string) ([]*model.Rentee, error) {
+	resp,err := r.RenteeClient.GetRenteesByBikeTYPE(ctx, &rentees.GetRenteesByBikeTYPERequest{Type: typeArg})
+	if err != nil {
+		return nil, err
+	}
+	var rentees []*model.Rentee
+	for _, rentee := range resp.Rentees {
+		rentees = append(rentees, &model.Rentee{
+			FirstName: rentee.FirstName,
+			LastName: rentee.LastName,
+			NationalIDNumber: rentee.National_Id_Number,
+			Phone: rentee.Phone,
+			Email: rentee.Email,
+			ID: rentee.Id,
+			HeldBikes: rentee.HeldBikes,
+		})
+	}
+	return rentees, nil
+}
+
+// GetRenteesByBikeMake is the resolver for the getRenteesByBikeMAKE field.
+func (r *queryResolver) GetRenteesByBikeMake(ctx context.Context, make string) ([]*model.Rentee, error) {
+	resp,err := r.RenteeClient.GetRenteesByBikeMAKE(ctx, &rentees.GetRenteeByBikeMAKERequest{Make: make})
+	if err != nil {
+		return nil, err
+	}
+	var rentees []*model.Rentee
+	for _, rentee := range resp.Rentees {
+		rentees = append(rentees, &model.Rentee{
+			FirstName: rentee.FirstName,
+			LastName: rentee.LastName,
+			NationalIDNumber: rentee.National_Id_Number,
+			Phone: rentee.Phone,
+			Email: rentee.Email,
+			ID: rentee.Id,
+			HeldBikes: rentee.HeldBikes,
+		})
+	}
+	return rentees, nil
+}
+
+// GetRenteesByBikeOwner is the resolver for the getRenteesByBikeOWNER field.
+func (r *queryResolver) GetRenteesByBikeOwner(ctx context.Context, ownerName string) ([]*model.Rentee, error) {
+	resp,err := r.RenteeClient.GetRenteesByBikeOWNER(ctx, &rentees.GetRenteeByBikeOWNERRequest{OwnerName: ownerName})
+	if err != nil {
+		return nil, err
+	}
+	var rentees []*model.Rentee
+	for _, rentee := range resp.Rentees {
+		rentees = append(rentees, &model.Rentee{
+			FirstName: rentee.FirstName,
+			LastName: rentee.LastName,
+			NationalIDNumber: rentee.National_Id_Number,
+			Phone: rentee.Phone,
+			Email: rentee.Email,
+			ID: rentee.Id,
+			HeldBikes: rentee.HeldBikes,
+		})
+
+	}
+	return rentees, nil
 }
 
 // Mutation returns MutationResolver implementation.

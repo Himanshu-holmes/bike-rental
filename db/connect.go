@@ -4,18 +4,13 @@ import (
 	"log"
 	"os"
 
+	"github.com/himanshuholmes/bikerental/models"
 	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )
-type Bike struct {
-	Id            string                
-	OwnerName     string                
-	Type          string               
-	Make          string                 
-	Serial        string                 
-	}
+
 
 func init() {
 	err := godotenv.Load(".env")
@@ -38,8 +33,10 @@ func ConnectDB() (*gorm.DB, error) {
 		return nil, err
 	}
 
-	bike := new(Bike)
+	bike := new(models.BikeModel)
 	err = db.AutoMigrate(bike)
+	rentee := new(models.RenteeModel)
+	err = db.AutoMigrate(rentee)
 	return db, err
 }
 
