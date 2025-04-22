@@ -179,7 +179,15 @@ func (s *Server) AddBike(ctx context.Context, req *bikesV1.AddBikeRequest) (*bik
 	if req == nil || req.Bike == nil {
 		return nil, fmt.Errorf("bike is not provided")
 	}
+	// print readable bike request
+	readBike := req.Bike
+	fmt.Printf("Adding bike: %+v\n", readBike)
 	bike := new(models.BikeModel)
+	bike.ID = readBike.Id
+	bike.Type = readBike.Type
+	bike.Make = readBike.Make
+	bike.OwnerName = readBike.OwnerName
+	bike.Serial = readBike.Serial
 	if err := s.db.WithContext(ctx).Create(&bike).Error; err != nil {
 		return nil, err
 	}
@@ -192,7 +200,6 @@ func (s *Server) AddBike(ctx context.Context, req *bikesV1.AddBikeRequest) (*bik
 	}
 	return &bikesV1.AddBikeResponse{Bike: protoBike}, nil
 }
-
 func (s *Server) DeleteBike(ctx context.Context, req *bikesV1.DeleteBikeRequest)(*bikesV1.DeleteBikeResponse, error){
 	if req == nil || req.Id == ""{
 		return nil, fmt.Errorf("bike id is not provided")

@@ -2,27 +2,83 @@
 #
 # https://gqlgen.com/getting-started/
 
-type Todo {
+type Bike {
   id: ID!
-  text: String!
-  done: Boolean!
-  user: User!
+  ownerName: String!
+  type: String!
+  make: String!
+  serial: String!
+  renteeId: String!
 }
 
-type User {
-  id: ID!
-  name: String!
+type Rentee {
+  id: String!
+  firstName: String!
+  lastName: String!
+  nationalIdNumber: String!
+  phone: String!
+  email: String!
+  heldBikes: [String!]!
 }
 
 type Query {
-  todos: [Todo!]!
+  ## BikeService methods
+
+  listBikes: [Bike!]!
+  getBike(id: String!): Bike
+  getBikes(ids: [String!]!): [Bike!]!
+  getBikesByTYPE(type: String!): [Bike!]!
+  getBikesByOWNER(ownerName: String!): [Bike!]!
+  getBikesByMAKE(make: String!): [Bike!]!
+
+  ## RenteeService methods
+
+  listRentees: [Rentee!]!
+  getRentee(id: String!): Rentee
+  getRenteeByBikeId(id: String!): Rentee
+  getRenteesByBikeTYPE(type: String!): [Rentee!]!
+  getRenteesByBikeMAKE(make: String!): [Rentee!]!
+  getRenteesByBikeOWNER(ownerName: String!): [Rentee!]!
 }
 
-input NewTodo {
-  text: String!
-  userId: String!
+input NewBike {
+  ownerName: String!
+  type: String
+  make: String
+  serial: String
+}
+input UpdateBikeInput {
+  id: String!
+  type: String
+  make: String
+  serial: String
+  ownerName: String
+}
+input RenteeInput {
+  id: String!
+  firstName: String!
+  lastName: String!
+  nationalIdNumber: String!
+  phone: String!
+  email: String!
+  heldBikes: [String!]!
+}
+input NewRenteeInput {
+  firstName: String!
+  lastName: String!
+  nationalIdNumber: String!
+  phone: String!
+  email: String!
+  heldBikes: [String!]!
 }
 
 type Mutation {
-  createTodo(input: NewTodo!): Todo!
+  ## BikeService methods
+
+  addBike(bike: NewBike!): Bike!
+  deleteBike(id: String!): Boolean!
+
+  ## RenteeService methods
+  addRentee(rentee: NewRenteeInput!): Rentee!
+  updateRentee(rentee: RenteeInput!): Rentee!
 }

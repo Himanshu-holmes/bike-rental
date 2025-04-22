@@ -2,7 +2,7 @@ package models
 
 
 	type BikeModel struct {
-	ID        string `gorm:"primaryKey"`
+	ID        string `gorm:"primaryKey;default:gen_random_uuid()"`
 	OwnerName string  `gorm:"not null"`
 	Type      string  
 	Make      string  

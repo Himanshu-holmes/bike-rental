@@ -1,7 +1,7 @@
 package models
 
 type RenteeModel struct {
-	ID        string       `gorm:"primaryKey"`
+	ID        string       `gorm:"primaryKey;default:gen_random_uuid()"`
 	FirstName string
 	LastName  string
 	NationalIdNumber string

@@ -2,25 +2,61 @@
 
 package model
 
+type Bike struct {
+	ID        string `json:"id"`
+	OwnerName string `json:"ownerName"`
+	Type      string `json:"type"`
+	Make      string `json:"make"`
+	Serial    string `json:"serial"`
+	RenteeID  string `json:"renteeId"`
+}
+
 type Mutation struct {
 }
 
-type NewTodo struct {
-	Text   string `json:"text"`
-	UserID string `json:"userId"`
+type NewBike struct {
+	OwnerName string  `json:"ownerName"`
+	Type      *string `json:"type,omitempty"`
+	Make      *string `json:"make,omitempty"`
+	Serial    *string `json:"serial,omitempty"`
+}
+
+type NewRenteeInput struct {
+	FirstName        string   `json:"firstName"`
+	LastName         string   `json:"lastName"`
+	NationalIDNumber string   `json:"nationalIdNumber"`
+	Phone            string   `json:"phone"`
+	Email            string   `json:"email"`
+	HeldBikes        []string `json:"heldBikes"`
 }
 
 type Query struct {
 }
 
-type Todo struct {
-	ID   string `json:"id"`
-	Text string `json:"text"`
-	Done bool   `json:"done"`
-	User *User  `json:"user"`
+type Rentee struct {
+	ID               string   `json:"id"`
+	FirstName        string   `json:"firstName"`
+	LastName         string   `json:"lastName"`
+	NationalIDNumber string   `json:"nationalIdNumber"`
+	Phone            string   `json:"phone"`
+	Email            string   `json:"email"`
+	HeldBikes        []string `json:"heldBikes"`
 }
 
-type User struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
+type RenteeInput struct {
+	ID               string   `json:"id"`
+	FirstName        string   `json:"firstName"`
+	LastName         string   `json:"lastName"`
+	NationalIDNumber string   `json:"nationalIdNumber"`
+	Phone            string   `json:"phone"`
+	Email            string   `json:"email"`
+	HeldBikes        []string `json:"heldBikes"`
+}
+
+type UpdateBikeInput struct {
+	ID        string  `json:"id"`
+	Type      *string `json:"type,omitempty"`
+	Make      *string `json:"make,omitempty"`
+	Serial    *string `json:"serial,omitempty"`
+	OwnerName *string `json:"ownerName,omitempty"`
 }
