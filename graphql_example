@@ -1,0 +1,83 @@
+# Welcome to GraphiQL
+#
+# GraphiQL is an in-browser tool for writing, validating, and
+# testing GraphQL queries.
+#
+# Type queries into this side of the screen, and you will see intelligent
+# typeaheads aware of the current GraphQL type schema and live syntax and
+# validation errors highlighted within the text.
+#
+# GraphQL queries typically start with a "{" character. Lines that start
+# with a # are ignored.
+#
+# An example GraphQL query might look like:
+#
+#     {
+#       field(arg: "value") {
+#         subField
+#       }
+#     }
+#
+# Keyboard shortcuts:
+#
+#   Prettify query:  Shift-Ctrl-P (or press the prettify button)
+#
+#  Merge fragments:  Shift-Ctrl-M (or press the merge button)
+#
+#        Run Query:  Ctrl-Enter (or press the play button)
+#
+#    Auto Complete:  Ctrl-Space (or just start typing)
+#
+query {
+  listBikes{
+    id
+    ownerName
+    type
+  }
+#   listRentees{
+#     id
+#     firstName
+#     lastName
+#   }
+}
+# mutation {
+  # addBike(bike: {
+  #   ownerName: "himan"
+  #   type: "gear"
+  #   make: "hero"
+  #   serial: "12345"
+  # }) {
+  #   id
+  #   ownerName
+  #   type
+  #   make
+  #   serial
+  #   renteeId
+  # }
+  # deleteBike(id:"8cef30a0-1b13-4c78-8a8b-8b1b7c4a9dbc")
+# addRentee(rentee: {
+#   firstName:"newman"
+#   lastName:"ydv"
+#   nationalIdNumber:"123456789"
+#   phone:"1234567890"
+#   email:"ptanhi@gmail.com"
+#   heldBikes:[]
+  
+# }){
+#   id
+#   firstName
+# }
+   # updateRentee(rentee: {
+  #   id: "578a5c90-3f13-4aba-ad41-635b67849f73",
+  #   firstName: "Alice",
+  #   lastName: "Smith",
+  #   nationalIdNumber: "XYZ987654",
+  #   phone: "9876543210",
+  #   email: "alice.smith@example.com",
+  #   heldBikes: ["bike123"]
+  # }) {
+  #   id
+  #   firstName
+  #   heldBikes
+  # }
+# }
